@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button onclick="add_pass()" style="margin: 10px;">Add Password</button>
+    <div id="add_pass" style="display: none;">
+        <form method="POST">
+            <input type="text" name="website" placeholder="Website" required>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="submit" value="Add">
+        </form>
+    </div>
+    <table>
+        <tr>
+            <th>Website</th>
+            <th>Username</th>
+            <th>Password</th>
+        </tr>
+        <script>
+            console.log({{ passwords }})
+        </script>
+        {% for password in passwords %}
+        <tr>
+            <td>{{ password.website }}</td>
+            <td>{{ password.username }}</td>
+            <td>{{ password.password }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        function add_pass() {
+            var x = document.getElementById("add_pass");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

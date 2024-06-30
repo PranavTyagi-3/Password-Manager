@@ -26,13 +26,60 @@
         </script>
         {% for password in passwords %}
         <tr>
-            <td>{{ password.website }}</td>
-            <td>{{ password.username }}</td>
-            <td>{{ password.password }}</td>
+            <td>{{ password[0] }}</td>
+            <td>{{ password[1] }}</td>
+            <td>{{ password[2] }}</td>
         </tr>
         {% endfor %}
     </table>
 
+
+    <video id="camera" autoplay></video>
+    <div id="alert">Unauthorized Access! Lockdown Initiated!</div>
+    <script>
+        const video = document.getElementById('camera');
+        const alertDiv = document.getElementById('alert');
+
+        // Get camera feed
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error('Error accessing camera:', error);
+            });
+
+        // Capture and send frames to the backend
+        video.addEventListener('play', () => {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            const sendFrame = () => {
+                if (video.paused || video.ended) return;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob(blob => {
+                    const formData = new FormData();
+                    formData.append('frame', blob);
+                    fetch('/process_frame', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.recognized) {
+                            alertDiv.style.display = 'block';
+                        } else {
+                            alertDiv.style.display = 'none';
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+                setTimeout(sendFrame, 5000); // Send frame every 5 second
+            };
+
+            sendFrame();
+        });
+    </script>
     <script>
         function add_pass() {
             var x = document.getElementById("add_pass");

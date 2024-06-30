@@ -8,8 +8,10 @@
 <body>
     <h1>OTP Verification</h1>
     <img src="{{ qr }}">
-    <form method="POST" action="/otpVerification">
+    <form method="POST" action="/otpVerification" enctype="multipart/form-data">
         <input type="text" name="otp" placeholder="OTP" required>
+        <!-- Use camera to capture the image of user and pass that image as well to form data-->
+        <input type="file" name="image" accept="image/*" capture="camera" required>
         <input type="hidden" name="email" value="{{ email }}">
         <input type="submit" value="Verify">
     </form>
